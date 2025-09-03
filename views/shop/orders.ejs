@@ -4,8 +4,25 @@
 <body>
 
 <%- include('../layouts/navigations') %>
-
-<h1>Your Orders</h1>
+<main>
+    <% if(orders.length <= 0) { %>
+        <h1>No Orders Yet</h1>
+    <% } else { %>
+        <h1>Your Orders Lists</h1>
+        <% orders.forEach(order => { %>
+            <ul>
+                <li>
+                    <h2>#<%=order.id %></h2>
+                    <% order.products.forEach(item => { %>
+                        <ul>
+                            <li><%=item.title%> (<%=item.orderItems.quantity%>)</li>
+                        </ul>
+                    <% }); %>
+                </li>
+            </ul>
+        <% }); %>
+    <% }; %>
+</main>
 
 </body>
 </html>

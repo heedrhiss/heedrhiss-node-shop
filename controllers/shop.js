@@ -1,6 +1,4 @@
 const Product = require('../models/product') 
-const Cart = require('../models/cart');
-const { where } = require('sequelize');
 
 exports.getHomePage = (req, res) => {
     res.render("shop/index", {pageTitle: "Heedrhiss Shop", path: "/"})
@@ -76,12 +74,49 @@ exports.postCart = (req, res) => {
 
 exports.postCartDelete = (req, res) => {
    const id = req.body.productId;
-   Product.findProduct(id, (product) => {
-      Cart.deleteCartItem(id, product.price)
-      res.redirect('/cart')
+   req.user.getCart().then(cart => {
+      return cart.getProducts({where : {
+         id: id
+      }})
+   }).then((products)=> {
+      const product = products[0]
+      return product.cartItems.destroy()
    })
+   .then(()=> { res.redirect('/cart') })
+   .catch(err => console.log(err))
+
+   // Product.findProduct(id, (product) => {
+   //    Cart.deleteCartItem(id, product.price)
+   // res.redirect('/cart')
+   // })
 }
 
 exports.getOrders = (req, res) => {
-   res.render("shop/orders", {pageTitle: "Your Orders", path: "/orders"})
+   req.user.getOrders({include: ['products']})
+   .then(orders => {
+      res.render("shop/orders", {pageTitle: "Your Orders", path: "/orders", orders: orders})
+   }).catch(err => console.log(err))
+
+}
+
+exports.postOrders = (req, res) => {
+   let fetchedCart;
+   req.user.getCart()
+   .then(cart => {
+      fetchedCart = cart;
+      return cart.getProducts()
+   })
+   .then(products => {
+      return req.user.createOrder().then((order) => {
+         return order.addProducts(products.map(product => {
+            product.orderItems = {quantity: product.cartItems.quantity}
+            return product
+            }))
+      })
+   })
+   .then(result => {
+      return fetchedCart.setProducts(null)
+   })
+   .then(()=> res.redirect('/orders'))
+   .catch(err => console.log(err))
 }
