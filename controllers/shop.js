@@ -11,19 +11,15 @@ exports.getProductsPage = (req, res) => {
    .catch(err => console.log(err))
 }
 
-// exports.getProduct = (req, res, next) => {
-//    const id = req.params.productId
-//    Product.findAll({
-//       where: {
-//          id: id
-//       }
-//    }).then((products) => {
-//       res.render("shop/product-details", {product: products[0], pageTitle: `Product Item: ${id}`, path: '/products'})
-//    }).catch(err => {
-//       console.log(err)
-//       res.status(500).render('404', {pageTitle: 'Error', path: ''})
-//    })
-// }
+exports.getProduct = (req, res, next) => {
+   const id = req.params.productId
+   Product.findById(id).then((product) => {
+      res.render("shop/product-details", {product: product, pageTitle: `Product Item: ${id}`, path: '/products'})
+   }).catch(err => {
+      console.log(err)
+      res.status(500).render('404', {pageTitle: 'Error', path: ''})
+   })
+}
 
 // exports.getCart = (req, res) => {
 //    req.user.getCart().then(cart => {

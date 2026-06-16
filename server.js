@@ -18,9 +18,9 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use("/admin", adminRouter)
 app.use(shopRouter)
 
-// app.use((req, res, next) => {
-//     res.status(404).render("404", {pageTitle: "404 Not Found", path: ""})
-// })
+app.use((req, res) => {
+    res.status(404).render("404", {pageTitle: "404 Not Found", path: ""})
+})
 
 mongoDB( ()=> {
     app.listen(3000)
