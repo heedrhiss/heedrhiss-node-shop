@@ -46,13 +46,13 @@ exports.postCartDelete = (req, res) => {
    .catch(err => console.log(err))
 }
 
-// exports.getOrders = (req, res) => {
-//    req.user.getOrders({include: ['products']})
-//    .then(orders => {
-//       res.render("shop/orders", {pageTitle: "Your Orders", path: "/orders", orders: orders})
-//    }).catch(err => console.log(err))
+exports.getOrders = (req, res) => {
+   req.user.getOrders()
+   .then(orders => {      
+      res.render("shop/orders", {pageTitle: "Your Orders", path: "/orders", orders: orders})
+   }).catch(err => console.log(err))
 
-// }
+}
 
 exports.postOrders = (req, res) => {   
    req.user.createOrder()

@@ -72,12 +72,26 @@ const getDB = require('../utils/database').getDB
 
     createOrder(){
         const db = getDB()
-        return db.collection('orders').insertOne(this.cart)
+        return this.getCart().then(cart=> {
+            const order = {
+                items: cart,
+                user: {
+                    _id: new mongoDB.ObjectId(String(this.id)),
+                    username: this.username
+                }
+            }
+            return db.collection('orders').insertOne(order)
+        })
         .then(order => {
             this.cart.items = []
             return db.collection('users')
             .updateOne({_id: new mongoDB.ObjectId(String(this.id))}, {$set: {cart: {items: []}}})
         }).catch(err => console.log(err))
+    }
+
+    getOrders(){
+        const db = getDB()
+        return db.collection('orders').find({'user._id': new mongoDB.ObjectId(String(this.id))}).toArray()
     }
 }
 
