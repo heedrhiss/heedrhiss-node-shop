@@ -7,8 +7,7 @@ let _db;
 const mongoDB = (callback)=> {
      // Use local MongoDB for development
      mongoClient.connect("mongodb+srv://heedrhiss:olowofenira@nodecluster.agoojqm.mongodb.net/?retryWrites=true&w=majority&appName=NodeCluster")
-    .then(client => {
-        console.log('Connected to MongoDB')
+    .then(client => {        
         _db = client.db("shop")
         callback();
     })
