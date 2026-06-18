@@ -1,27 +1,26 @@
 <%- include('../layouts/header.ejs') %>
-
+<link rel="stylesheet" href="/css/orders.css">
 </head>
 <body>
 
 <%- include('../layouts/navigations') %>
 <main>
-    <% if(orders.length <= 0) { %>
-        <h1>No Orders Yet</h1>
+    <% if (orders.length <= 0) { %>
+        <h1>No orders made yet!</h1>
     <% } else { %>
-        <h1>Your Orders Lists</h1>
-        <% orders.forEach(order => { %>
-            <ul>
-                <li>
-                    <h2>#<%=order._id %></h2>
-                    <% order.items.forEach(item => { %>
-                        <ul>
-                            <li><%=item.title%> (<%=item.quantity%>)</li>
-                        </ul>
-                    <% }); %>
+        <ul class="orders">
+            <% orders.forEach(order => { %>
+                <li class="orders__item">
+                    <h1>Order - # <%= order._id %></h1>
+                    <ul class="orders__products">
+                        <% order.products.forEach(p => { %>
+                            <li class="orders__products-item"><%= p.product.title %> (<%= p.quantity %>)</li>
+                        <% }); %>
+                    </ul>
                 </li>
-            </ul>
-        <% }); %>
-    <% }; %>
+            <% }); %>
+        </ul>
+    <% } %>
 </main>
 
 </body>
