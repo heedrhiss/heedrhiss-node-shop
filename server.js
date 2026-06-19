@@ -1,6 +1,7 @@
-const express = require('express')
-const body = require('body-parser');
-const mongoose = require('mongoose');
+const express   = require('express')
+const body      = require('body-parser');
+const mongoose  = require('mongoose');
+const session   = require('express-session')
 
 const path = require('path')
 
@@ -17,6 +18,7 @@ app.set('views', 'views')
 
 app.use(body.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(session({secret: 'my_dark_lil_secret', resave: false, saveUninitialized: false}))
 
 app.use((req, res, next)=> {
  User.findById('6a33dc6e861e12b97762dbcb')

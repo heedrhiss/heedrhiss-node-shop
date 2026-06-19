@@ -2,8 +2,8 @@ const Product = require('../models/product')
 const Order = require('../models/order') 
 
 
-exports.getHomePage = (req, res) => {
-    res.render("shop/index", {pageTitle: "Heedrhiss Shop", path: "/"})
+exports.getHomePage = (req, res) => {      
+    res.render("shop/index", {pageTitle: "Heedrhiss Shop", path: "/", isAuthenticated: req.session.isLoggedIn})
 }
 
 exports.getProductsPage = (req, res) => {
@@ -11,7 +11,7 @@ exports.getProductsPage = (req, res) => {
    // .select('title price -_id')
    .populate('userId', 'name -_id')
    .then((products) => {            
-       res.render("shop/products-lists", {prods: products, pageTitle: "Products", path: "/products"})
+       res.render("shop/products-lists", {prods: products, pageTitle: "Products", path: "/products", isAuthenticated: req.session.isLoggedIn})
    })
    .catch(err => console.log(err))
 }
@@ -19,7 +19,7 @@ exports.getProductsPage = (req, res) => {
 exports.getProduct = (req, res, next) => {
    const id = req.params.productId
    Product.findById(id).then((product) => {
-      res.render("shop/product-details", {product: product, pageTitle: `Product Item: ${id}`, path: '/products'})
+      res.render("shop/product-details", {product: product, pageTitle: `Product Item: ${id}`, path: '/products', isAuthenticated: req.session.isLoggedIn})
    }).catch(err => {
       console.log(err)
       res.status(500).render('404', {pageTitle: 'Error', path: ''})
@@ -29,7 +29,7 @@ exports.getProduct = (req, res, next) => {
 exports.getCart = (req, res) => {
    req.user.populate('cart.items.productId')   
    .then(user => {            
-      res.render("shop/cart", {pageTitle: "Cart", path: "/cart", products: user.cart.items})
+      res.render("shop/cart", {pageTitle: "Cart", path: "/cart", products: user.cart.items, isAuthenticated: req.session.isLoggedIn})
    }).catch(err => {
       console.log(err)
       res.status(500).render('404', {pageTitle: 'Error in cart', path: ''})
@@ -54,9 +54,8 @@ exports.postCartDelete = (req, res) => {
 
 exports.getOrders = (req, res) => {
    Order.find({'user.userId': req.user._id})
-   .then(orders => {      
-      console.log(orders)
-      res.render("shop/orders", {pageTitle: "Your Orders", path: "/orders", orders: orders})
+   .then(orders => {            
+      res.render("shop/orders", {pageTitle: "Your Orders", path: "/orders", orders: orders, isAuthenticated: req.session.isLoggedIn})
    }).catch(err => console.log(err))
 
 }

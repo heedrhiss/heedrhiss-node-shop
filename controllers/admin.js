@@ -2,7 +2,7 @@ const Product = require("../models/product")
 
 exports.getAddPage = (req, res, next) => {
    // res.sendFile(path.join(__dirname, '..', 'views', 'add-product.html'))
-   res.render("admin/add-product", {pageTitle: "Add Product",  path: "/add-product", edit: false})
+   res.render("admin/add-product", {pageTitle: "Add Product",  path: "/add-product", edit: false, isAuthenticated: req.session.isLoggedIn})
 }
 
 exports.postProduct = (req, res) => {
@@ -24,11 +24,12 @@ exports.getAdminProduct = (req, res) => {
    Product.find().then((products) => {
      res.render('admin/product-list', {
          prods: products,
+         isAuthenticated: req.session.isLoggedIn,
          pageTitle: "Admin Product Page", path: "/adProduct"
       })
    }).catch(err => {
       console.log(err)
-      res.status(500).render('404', {pageTitle: 'Error', path: ''})
+      res.status(500).render('404', {pageTitle: 'Error', path: '', isAuthenticated: req.session.isLoggedIn})
    })
 }
 
@@ -42,7 +43,8 @@ exports.getEditProduct = (req, res) => {
       res.render('admin/add-product',
          {
             product: product, pageTitle: `Edit ${id} Product`,
-            edit: editMode, path: "/adProduct"
+            edit: editMode, path: "/adProduct",
+            isAuthenticated: req.session.isLoggedIn
          })
    }).catch(err => {
       console.log(err)
