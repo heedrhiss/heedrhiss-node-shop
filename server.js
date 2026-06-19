@@ -1,9 +1,18 @@
-const express   = require('express')
-const body      = require('body-parser');
-const mongoose  = require('mongoose');
-const session   = require('express-session')
+const express       = require('express')
+const body          = require('body-parser');
+const mongoose      = require('mongoose');
+const session       = require('express-session')
+const MongoDBSession = require('connect-mongodb-session')(session);
 
 const path = require('path')
+
+const DB_URI = 'mongodb+srv://heedrhiss:olowofenira@nodecluster.agoojqm.mongodb.net/shop?retryWrites=true&w=majority&appName=NodeCluster'
+
+const sessionStore = new MongoDBSession({
+    uri: DB_URI,
+    collection: 'sessions',
+    // expires: 7200
+})
 
 const adminRouter = require('./routes/admin')
 const shopRouter = require('./routes/shop');
@@ -18,11 +27,12 @@ app.set('views', 'views')
 
 app.use(body.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
-app.use(session({secret: 'my_dark_lil_secret', resave: false, saveUninitialized: false}))
+app.use(session({secret: 'my_dark_lil_secret', resave: false, saveUninitialized: false, store: sessionStore}))
 
 app.use((req, res, next)=> {
- User.findById('6a33dc6e861e12b97762dbcb')
- .then(user => {
+if(!req.session.user) return next();
+ User.findById(req.session.user._id)
+ .then(user => {    
     req.user = user
     next()
     }).catch(err => console.log(err))
@@ -34,14 +44,14 @@ app.use(authRouter)
 
 
 app.use((req, res) => {
-    res.status(404).render("404", {pageTitle: "404 Not Found", path: ""})
+    res.status(404).render("404", {pageTitle: "404 Not Found", path: "", isAuthenticated: req.session.isLoggedIn})
 })
 
 // mongoDB( ()=> {
 //     app.listen(3000)
 // })
 
-mongoose.connect('mongodb+srv://heedrhiss:olowofenira@nodecluster.agoojqm.mongodb.net/shop?retryWrites=true&w=majority&appName=NodeCluster').then(res => {
+mongoose.connect(DB_URI).then(res => {
     User.findOne().then(user =>{
         if(!user){
             const user = new User(
