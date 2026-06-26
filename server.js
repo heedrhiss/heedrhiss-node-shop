@@ -3,8 +3,8 @@ const body          = require('body-parser');
 const mongoose      = require('mongoose');
 const session       = require('express-session')
 const MongoDBSession = require('connect-mongodb-session')(session);
+const path           = require('path')
 
-const path = require('path')
 
 const DB_URI = 'mongodb+srv://heedrhiss:olowofenira@nodecluster.agoojqm.mongodb.net/shop?retryWrites=true&w=majority&appName=NodeCluster'
 
@@ -47,18 +47,6 @@ app.use((req, res) => {
     res.status(404).render("404", {pageTitle: "404 Not Found", path: "", isAuthenticated: req.session.isLoggedIn})
 })
 
-// mongoDB( ()=> {
-//     app.listen(3000)
-// })
-
-mongoose.connect(DB_URI).then(res => {
-    User.findOne().then(user =>{
-        if(!user){
-            const user = new User(
-                {name: 'heedrhiss', email: 'heedrhiss@test.com', cart: {items: []}}
-                )
-                user.save()
-            }            
+mongoose.connect(DB_URI).then(res => {  
         app.listen(3000)
-    })
 }).catch(err => console.log(err))
